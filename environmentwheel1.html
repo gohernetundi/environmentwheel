@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Environment Debate Topics Wheel</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #f3f6f9;
+    font-family: Arial, sans-serif;
+  }
+
+  #wheel-container {
+    position: relative;
+    width: 420px;
+    height: 420px;
+  }
+
+  #wheel {
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    border: 8px solid #fff;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    overflow: hidden;
+    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  }
+
+  #pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 30px solid #555;
+    z-index: 10;
+  }
+
+  .slice {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    overflow: visible;
+  }
+
+  .slice span {
+    position: absolute;
+    left: -150px;
+    top: -10px;
+    width: 300px;
+    text-align: center;
+    transform-origin: 150px center;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    line-height: 1.2;
+  }
+
+  #center {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    line-height: 1.2;
+    font-weight: bold;
+    color: #333;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #questionBox {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    width: 80%;
+    min-height: 40px;
+  }
+
+  #buttons {
+    margin-top: 15px;
+  }
+
+  button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+</style>
+</head>
+<body>
+
+<div id="wheel-container">
+  <div id="pointer"></div>
+  <div id="wheel"></div>
+  <div id="center">Environment<br>debate topics</div>
+</div>
+
+<div id="questionBox"></div>
+
+<div id="buttons">
+  <button onclick="spin()">Spin it</button>
+  <button onclick="eliminate()">Eliminate</button>
+</div>
+
+<script>
+  let topics = [
+    "Should nuclear power be used instead of fossil fuels?",
+    "Is organic farming the solution for soil pollution?",
+    "Is tourism good or bad for the environment?",
+    "Sustainable development should be included in the curriculum",
+    "Being a vegetarian will help to solve global warming",
+    "Should we ban the use of pesticides?",
+    "Agriculture is the main cause of water pollution.",
+    "Changing your lifestyle will not combat global warming"
+  ];
+
+  const colors = ["#ff6f61", "#6b5b95", "#88b04b", "#f7cac9", "#92a8d1", "#955251", "#b565a7", "#009b77"];
+  let wheel = document.getElementById("wheel");
+  let questionBox = document.getElementById("questionBox");
+  let currentRotation = 0;
+  let currentQuestion = null;
+
+  function drawWheel() {
+    wheel.innerHTML = "";
+    const num = topics.length;
+    for (let i = 0; i < num; i++) {
+      const slice = document.createElement("div");
+      slice.className = "slice";
+      const angle = (360 / num) * i;
+      slice.style.background = colors[i % colors.length];
+      slice.style.transform = `rotate(${angle}deg)`;
+      // A szelet szövege
+      const text = document.createElement("span");
+      text.textContent = topics[i];
+      text.style.transform = `rotate(${180 / num}deg)`; // szöveg vízszintben
+      slice.appendChild(text);
+      wheel.appendChild(slice);
+    }
+  }
+
+  drawWheel();
+
+  function spin() {
+    if (topics.length === 0) {
+      questionBox.textContent = "No topics left!";
+      return;
+    }
+    let randomSpin = Math.floor(Math.random() * 360) + 1800;
+    currentRotation += randomSpin;
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+    setTimeout(() => {
+      let normalized = currentRotation % 360;
+      let sliceAngle = 360 / topics.length;
+      let index = Math.floor((360 - normalized) / sliceAngle) % topics.length;
+      currentQuestion = topics[index];
+      questionBox.textContent = currentQuestion;
+    }, 5200);
+  }
+
+  function eliminate() {
+    if (!currentQuestion) return;
+    let index = topics.indexOf(currentQuestion);
+    if (index > -1) {
+      topics.splice(index, 1);
+      currentQuestion = null;
+      questionBox.textContent = "";
+      drawWheel();
+    }
+  }
+</script>
+</body>
+</html>
